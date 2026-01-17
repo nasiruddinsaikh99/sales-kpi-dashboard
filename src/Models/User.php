@@ -61,4 +61,24 @@ class User {
         $stmt->execute(['id' => $id]);
         return $stmt->fetch();
     }
+
+    /**
+     * Find user by name (case-insensitive match)
+     * Tries exact match first, then partial match
+     */
+    public function findByName($name) {
+        $name = trim($name);
+        
+        // Try exact match first (case-insensitive)
+        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE LOWER(name) = LOWER(:name) AND role = 'agent' LIMIT 1");
+        $stmt->execute(['name' => $name]);
+        $user = $stmt->fetch();
+        
+        if ($user) return $user;
+        
+        // Try partial match (name contains search term)
+        $stmt = $this->pdo->prepare("SELECT * FROM users WHERE LOWER(name) LIKE LOWER(:name) AND role = 'agent' LIMIT 1");
+        $stmt->execute(['name' => '%' . $name . '%']);
+        return $stmt->fetch();
+    }
 }

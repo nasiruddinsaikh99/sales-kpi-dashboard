@@ -8,7 +8,7 @@
     <style>
         /* Ultra wide table scroll */
         .table-container { overflow-x: auto; max-width: 100vw; }
-        th, td { white-space: nowrap; padding: 0.75rem 1.5rem; }
+        th, td { white-space: nowrap; padding: 0.5rem 0.75rem; font-size: 0.75rem; }
         .sticky-col { position: sticky; left: 0; z-index: 10; }
         
         /* Custom Scrollbar for better UI */
@@ -47,86 +47,123 @@
                     <h2 class="text-2xl font-bold text-gray-900 dark:text-white"><?= htmlspecialchars($upload['batch_name']) ?></h2>
                     <p class="text-gray-500 dark:text-gray-400 text-sm">
                         Month: <span class="text-indigo-600 dark:text-indigo-300"><?= htmlspecialchars($upload['for_month']) ?></span> 
-                        &bull; Status: Active
+                        &bull; Records: <?= count($records) ?>
                     </p>
                 </div>
                 <div class="flex gap-3">
                     <a href="/sales-kpi-dashboard/admin/dashboard" class="px-4 py-2 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-sm text-gray-600 dark:text-gray-300 transition">Back to List</a>
-                    <!-- Placeholder for Export Button -->
-                    <button class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm shadow-lg flex items-center gap-2 transition opacity-50 cursor-not-allowed" disabled title="Coming Soon">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        Export CSV
-                    </button>
                 </div>
             </div>
 
             <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl table-container flex-grow border border-gray-200 dark:border-gray-700 overflow-auto relative custom-scrollbar min-h-0">
-                <table class="w-full text-left text-sm border-collapse">
-                <thead class="bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 uppercase font-bold sticky top-0 z-40 shadow-sm">
+                <table class="w-full text-left text-xs border-collapse">
+                <thead class="bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 uppercase font-bold sticky top-0 z-40 shadow-sm">
                     <tr>
-                        <th class="sticky left-0 z-50 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-[2px_0_5px_rgba(0,0,0,0.1)] dark:shadow-[2px_0_5px_rgba(0,0,0,0.3)]">Agent Name</th>
+                        <!-- Sticky Agent Name Column -->
+                        <th class="sticky left-0 z-50 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-[2px_0_5px_rgba(0,0,0,0.1)] dark:shadow-[2px_0_5px_rgba(0,0,0,0.3)] min-w-[180px]">Individual Employee</th>
                         
-                        <!-- Financials -->
-                        <th class="bg-gray-50 dark:bg-gray-800">Type</th>
-                        <th class="text-right bg-gray-50 dark:bg-gray-800">Gross Profit</th>
-                        <th class="text-right bg-gray-50 dark:bg-gray-800">Chargeback</th>
-                        <th class="text-right bg-gray-50 dark:bg-gray-800">Net GP</th>
-                        <th class="text-right bg-gray-50 dark:bg-gray-800">Total Comm.</th>
-                        <th class="text-right bg-gray-50 dark:bg-gray-800">Final Payout</th>
-                        <th class="text-right bg-gray-50 dark:bg-gray-800">Payout CB</th>
+                        <!-- Financial Columns (Matching Client CSV Exactly) -->
+                        <th class="text-right bg-gray-50 dark:bg-gray-800">GROSS PROFIT</th>
+                        <th class="text-right bg-gray-50 dark:bg-gray-800">Net GP after Chargebacks</th>
+                        <th class="text-center bg-gray-50 dark:bg-gray-800">GP Spiff Qualified %</th>
+                        <th class="text-right bg-gray-50 dark:bg-gray-800">GP Commission</th>
+                        <th class="text-right bg-gray-50 dark:bg-gray-800">GP Spiff Amt for Accelerator</th>
+                        <th class="text-right bg-gray-50 dark:bg-gray-800">Payout</th>
+                        <th class="text-right bg-gray-50 dark:bg-gray-800">Payout Chargeback</th>
                         <th class="text-right bg-gray-50 dark:bg-gray-800">Lateness</th>
-                        
-                        <!-- Core Stats -->
-                        <th class="bg-gray-50 dark:bg-gray-800">Qualifiers</th>
+                        <th class="text-right bg-emerald-100 dark:bg-emerald-900/20">Final Payout</th>
+                        <th class="text-center bg-gray-50 dark:bg-gray-800">Qualifiers</th>
+                        <th class="text-center bg-gray-50 dark:bg-gray-800">Total Accelerators %</th>
                         <th class="text-right bg-gray-50 dark:bg-gray-800">Flavor of Month</th>
-                        <th class="text-right bg-gray-50 dark:bg-gray-800">Device Spiff</th>
-                        <th class="text-right bg-gray-50 dark:bg-gray-800">Fios Sold</th>
-                        <th class="text-right bg-gray-50 dark:bg-gray-800">VHI</th>
-                        <th class="text-right bg-gray-50 dark:bg-gray-800">Upgrade Qty</th>
-                        <th class="text-right bg-gray-50 dark:bg-gray-800">SMT GA</th>
-                        <th class="text-right bg-gray-50 dark:bg-gray-800">SMB GA</th>
                         
-                        <!-- Percentages & Accelerators -->
-                        <th class="text-center bg-gray-50 dark:bg-gray-800">Priority Upg %</th>
-                        <th class="text-center bg-gray-50 dark:bg-gray-800">Upg Conv %</th>
-                        <th class="text-center bg-gray-50 dark:bg-gray-800">Cons. SMT Conv %</th>
+                        <!-- Performance Metrics -->
+                        <th class="text-center bg-gray-50 dark:bg-gray-800">High Priority Upgrade %</th>
+                        <th class="text-center bg-blue-50 dark:bg-blue-900/10">Accel %</th>
+                        <th class="text-center bg-gray-50 dark:bg-gray-800">20% VHI Close Rate</th>
+                        <th class="text-right bg-gray-50 dark:bg-gray-800">FIOS Qty Sold</th>
+                        <th class="text-right bg-gray-50 dark:bg-gray-800">VHI</th>
+                        <th class="text-center bg-blue-50 dark:bg-blue-900/10">Accel %</th>
+                        <th class="text-right bg-gray-50 dark:bg-gray-800">Upgrade Quantity</th>
+                        <th class="text-center bg-gray-50 dark:bg-gray-800">Upgrade Conversion %</th>
+                        <th class="text-center bg-blue-50 dark:bg-blue-900/10">Accel %</th>
+                        <th class="text-right bg-gray-50 dark:bg-gray-800">CSGA</th>
+                        <th class="text-center bg-gray-50 dark:bg-gray-800">Consumer SMT GA Conversion %</th>
+                        <th class="text-center bg-blue-50 dark:bg-blue-900/10">Accel %</th>
                         <th class="text-center bg-gray-50 dark:bg-gray-800">VZ Protect %</th>
-                        <th class="text-center bg-gray-50 dark:bg-gray-800">Premium Unl. %</th>
-                        <th class="text-center bg-gray-50 dark:bg-gray-800">Total Accel %</th>
+                        <th class="text-center bg-blue-50 dark:bg-blue-900/10">Accel %</th>
+                        <th class="text-right bg-gray-50 dark:bg-gray-800">Take Rate for Registered Perks</th>
+                        <th class="text-center bg-blue-50 dark:bg-blue-900/10">Accel %</th>
+                        <th class="text-center bg-gray-50 dark:bg-gray-800">Premium Unlimited %</th>
+                        <th class="text-center bg-blue-50 dark:bg-blue-900/10">Accel %</th>
+                        <th class="text-right bg-gray-50 dark:bg-gray-800">SMB GA</th>
+                        <th class="text-center bg-blue-50 dark:bg-blue-900/10">Accel %</th>
+                        <th class="text-right bg-gray-50 dark:bg-gray-800">AGPPS on DP only</th>
+                        <th class="text-center bg-blue-50 dark:bg-blue-900/10">Accel %</th>
+                        <th class="text-center bg-gray-50 dark:bg-gray-800">Accounts Accessed %</th>
+                        <th class="text-center bg-blue-50 dark:bg-blue-900/10">Accel %</th>
+                        <th class="text-center bg-gray-50 dark:bg-gray-800">Manual Leads %</th>
+                        <th class="text-center bg-blue-50 dark:bg-blue-900/10">Accel %</th>
+                        <th class="text-center bg-gray-50 dark:bg-gray-800">Chatter Spot Opt In %</th>
+                        <th class="text-center bg-blue-50 dark:bg-blue-900/10">Accel %</th>
+                        <th class="text-center bg-gray-50 dark:bg-gray-800">Box Convertion</th>
+                        <th class="text-center bg-gray-50 dark:bg-gray-800">Ready Go/Setup per SMT on DP</th>
+                        <th class="text-right bg-gray-50 dark:bg-gray-800">Device Spiff</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700 font-medium">
                     <?php foreach ($records as $r): ?>
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition">
-                        <td class="sticky left-0 z-30 bg-white dark:bg-gray-900 group-hover:bg-gray-50 dark:group-hover:bg-gray-800/50 font-medium text-gray-900 dark:text-white border-r border-gray-200 dark:border-gray-700 shadow-[2px_0_5px_rgba(0,0,0,0.1)] dark:shadow-[2px_0_5px_rgba(0,0,0,0.3)] min-w-[200px] whitespace-nowrap">
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition group">
+                        <!-- Sticky Agent Name -->
+                        <td class="sticky left-0 z-30 bg-white dark:bg-gray-900 group-hover:bg-gray-50 dark:group-hover:bg-gray-800/50 font-semibold text-gray-900 dark:text-white border-r border-gray-200 dark:border-gray-700 shadow-[2px_0_5px_rgba(0,0,0,0.1)] dark:shadow-[2px_0_5px_rgba(0,0,0,0.3)] min-w-[180px]">
                             <?= htmlspecialchars($r['agent_name_snapshot']) ?>
                         </td>
                         
-                        <td class="bg-white/50 dark:bg-gray-900/50"><span class="px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 text-xs border border-blue-200 dark:border-blue-500/20">Agent</span></td>
-                        
-                        <td class="text-right text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50">$<?= number_format($r['gross_profit'], 2) ?></td>
-                        <td class="text-right text-red-500 dark:text-red-400 bg-white/50 dark:bg-gray-900/50">$<?= number_format($r['chargeback'], 2) ?></td>
-                        <td class="text-right font-bold text-gray-900 dark:text-white bg-white/50 dark:bg-gray-900/50">$<?= number_format($r['net_gp'], 2) ?></td>
-                        <td class="text-right text-emerald-600 dark:text-emerald-400 font-bold bg-white/50 dark:bg-gray-900/50">$<?= number_format($r['total_gp_spiff_amt'], 2) ?></td>
-                        <td class="text-right text-amber-600 dark:text-amber-400 font-bold border-l border-gray-200 dark:border-gray-700 pl-4 bg-white/50 dark:bg-gray-900/50">$<?= number_format($r['final_payout'] ?? 0, 2) ?></td>
-                        <td class="text-center text-gray-500 bg-white/50 dark:bg-gray-900/50"><?= $r['payout_cb'] ? '$'.number_format($r['payout_cb'],2) : '-' ?></td>
-                        <td class="text-center text-red-500 dark:text-red-400 bg-white/50 dark:bg-gray-900/50"><?= $r['lateness'] ? '$'.number_format($r['lateness'],2) : '-' ?></td>
-                        
-                        <td class="text-center font-mono text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50"><?= htmlspecialchars($r['qualifiers'] ?? '-') ?></td>
+                        <!-- Financial Data -->
+                        <td class="text-right text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50">$<?= number_format($r['gross_profit'] ?? 0, 2) ?></td>
+                        <td class="text-right font-bold text-gray-900 dark:text-white bg-white/50 dark:bg-gray-900/50">$<?= number_format($r['net_gp'] ?? 0, 2) ?></td>
+                        <td class="text-center text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50"><?= htmlspecialchars($r['gp_spiff_qualified_pct'] ?? '-') ?></td>
+                        <td class="text-right text-emerald-600 dark:text-emerald-400 bg-white/50 dark:bg-gray-900/50">$<?= number_format($r['total_gp_spiff_amt'] ?? 0, 2) ?></td>
+                        <td class="text-right text-gray-500 dark:text-gray-400 bg-white/50 dark:bg-gray-900/50">$<?= number_format($r['gp_spiff_amt_accelerator'] ?? 0, 2) ?></td>
+                        <td class="text-right text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50">$<?= number_format($r['payout'] ?? 0, 2) ?></td>
+                        <td class="text-right text-red-500 dark:text-red-400 bg-white/50 dark:bg-gray-900/50"><?= ($r['payout_cb'] ?? 0) != 0 ? '$'.number_format($r['payout_cb'], 2) : '-' ?></td>
+                        <td class="text-right text-red-500 dark:text-red-400 bg-white/50 dark:bg-gray-900/50"><?= ($r['lateness'] ?? 0) != 0 ? '$'.number_format($r['lateness'], 2) : '-' ?></td>
+                        <td class="text-right font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/10">$<?= number_format($r['final_payout'] ?? 0, 2) ?></td>
+                        <td class="text-center bg-white/50 dark:bg-gray-900/50"><span class="px-2 py-0.5 rounded text-xs <?= ($r['qualifiers'] ?? 'No') === 'Yes' ? 'bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400' : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400' ?>"><?= htmlspecialchars($r['qualifiers'] ?? '-') ?></span></td>
+                        <td class="text-center font-bold text-indigo-600 dark:text-indigo-400 bg-white/50 dark:bg-gray-900/50"><?= htmlspecialchars($r['total_accelerators_pct'] ?? '-') ?></td>
                         <td class="text-right text-gray-500 dark:text-gray-400 bg-white/50 dark:bg-gray-900/50">$<?= number_format($r['flavor_of_month'] ?? 0, 2) ?></td>
-                        <td class="text-right text-gray-500 dark:text-gray-400 bg-white/50 dark:bg-gray-900/50">$<?= number_format($r['device_spiff'] ?? 0, 2) ?></td>
-                        <td class="text-right text-gray-900 dark:text-white bg-white/50 dark:bg-gray-900/50"><?= $r['fios_qty_sold'] ?? 0 ?></td>
-                        <td class="text-right text-gray-900 dark:text-white bg-white/50 dark:bg-gray-900/50"><?= $r['vhi'] ?? 0 ?> <span class="text-xs text-gray-500">(<?= $r['vhi_accel_pct'] ?? '0%' ?>)</span></td>
-                        <td class="text-right text-gray-900 dark:text-white bg-white/50 dark:bg-gray-900/50"><?= $r['upgrade_quantity'] ?? 0 ?></td>
-                        <td class="text-right text-gray-900 dark:text-white bg-white/50 dark:bg-gray-900/50"><?= $r['smt_ga'] ?? 0 ?></td>
-                        <td class="text-right text-gray-900 dark:text-white bg-white/50 dark:bg-gray-900/50"><?= $r['smb_ga'] ?? 0 ?> <span class="text-xs text-gray-500 ml-1">(<?= $r['smb_ga_accel_pct'] ?? '0%' ?>)</span></td>
                         
-                        <td class="text-center text-sm bg-white/50 dark:bg-gray-900/50"><?= $r['priority_upgrade_pct'] ?? '-' ?> <span class="block text-[10px] text-gray-500">Ac:<?= $r['priority_upgrade_accel_pct'] ?? '-' ?></span></td>
-                        <td class="text-center text-sm bg-white/50 dark:bg-gray-900/50"><?= $r['upgrade_conversion_pct'] ?? '-' ?> <span class="block text-[10px] text-gray-500">Ac:<?= $r['upgrade_conversion_accel_pct'] ?? '-' ?></span></td>
-                        <td class="text-center text-sm bg-white/50 dark:bg-gray-900/50"><?= $r['consumer_smt_ga_conversion_pct'] ?? '-' ?> <span class="block text-[10px] text-gray-500">Ac:<?= $r['consumer_smt_ga_conversion_accel_pct'] ?? '-' ?></span></td>
-                        <td class="text-center text-sm bg-white/50 dark:bg-gray-900/50"><?= $r['vz_protect_pct'] ?? '-' ?> <span class="block text-[10px] text-gray-500">Ac:<?= $r['vz_protect_accel_pct'] ?? '-' ?></span></td>
-                        <td class="text-center text-sm bg-white/50 dark:bg-gray-900/50"><?= $r['premium_unlimited_pct'] ?? '-' ?> <span class="block text-[10px] text-gray-500">Ac:<?= $r['premium_unlimited_accel_pct'] ?? '-' ?></span></td>
-                        <td class="text-center font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/10 border-l border-r border-emerald-100 dark:border-gray-700"><?= $r['total_accelerators_pct'] ?? '-' ?></td>
+                        <!-- Performance Metrics with Accelerators -->
+                        <td class="text-center text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50"><?= htmlspecialchars($r['priority_upgrade_pct'] ?? '-') ?></td>
+                        <td class="text-center text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/5"><?= htmlspecialchars($r['priority_upgrade_accel_pct'] ?? '-') ?></td>
+                        <td class="text-center text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50"><?= htmlspecialchars($r['vhi_close_rate_pct'] ?? '-') ?></td>
+                        <td class="text-right text-gray-900 dark:text-white bg-white/50 dark:bg-gray-900/50"><?= $r['fios_qty_sold'] ?? 0 ?></td>
+                        <td class="text-right text-gray-900 dark:text-white bg-white/50 dark:bg-gray-900/50"><?= $r['vhi'] ?? 0 ?></td>
+                        <td class="text-center text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/5"><?= htmlspecialchars($r['vhi_accel_pct'] ?? '-') ?></td>
+                        <td class="text-right text-gray-900 dark:text-white bg-white/50 dark:bg-gray-900/50"><?= $r['upgrade_quantity'] ?? 0 ?></td>
+                        <td class="text-center text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50"><?= htmlspecialchars($r['upgrade_conversion_pct'] ?? '-') ?></td>
+                        <td class="text-center text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/5"><?= htmlspecialchars($r['upgrade_conversion_accel_pct'] ?? '-') ?></td>
+                        <td class="text-right text-gray-900 dark:text-white bg-white/50 dark:bg-gray-900/50"><?= $r['smt_ga'] ?? 0 ?></td>
+                        <td class="text-center text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50"><?= htmlspecialchars($r['consumer_smt_ga_conversion_pct'] ?? '-') ?></td>
+                        <td class="text-center text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/5"><?= htmlspecialchars($r['consumer_smt_ga_conversion_accel_pct'] ?? '-') ?></td>
+                        <td class="text-center text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50"><?= htmlspecialchars($r['vz_protect_pct'] ?? '-') ?></td>
+                        <td class="text-center text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/5"><?= htmlspecialchars($r['vz_protect_accel_pct'] ?? '-') ?></td>
+                        <td class="text-right text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50"><?= number_format($r['take_rate_registered_perks'] ?? 0, 2) ?></td>
+                        <td class="text-center text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/5"><?= htmlspecialchars($r['take_rate_registered_perks_accel_pct'] ?? '-') ?></td>
+                        <td class="text-center text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50"><?= htmlspecialchars($r['premium_unlimited_pct'] ?? '-') ?></td>
+                        <td class="text-center text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/5"><?= htmlspecialchars($r['premium_unlimited_accel_pct'] ?? '-') ?></td>
+                        <td class="text-right text-gray-900 dark:text-white bg-white/50 dark:bg-gray-900/50"><?= $r['smb_ga'] ?? 0 ?></td>
+                        <td class="text-center text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/5"><?= htmlspecialchars($r['smb_ga_accel_pct'] ?? '-') ?></td>
+                        <td class="text-right text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50"><?= number_format($r['agpps_dp_only'] ?? 0, 2) ?></td>
+                        <td class="text-center text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/5"><?= htmlspecialchars($r['agpps_dp_only_accel_pct'] ?? '-') ?></td>
+                        <td class="text-center text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50"><?= htmlspecialchars($r['accounts_accessed_pct'] ?? '-') ?></td>
+                        <td class="text-center text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/5"><?= htmlspecialchars($r['accounts_accessed_accel_pct'] ?? '-') ?></td>
+                        <td class="text-center text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50"><?= htmlspecialchars($r['manual_leads_pct'] ?? '-') ?></td>
+                        <td class="text-center text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/5"><?= htmlspecialchars($r['manual_leads_accel_pct'] ?? '-') ?></td>
+                        <td class="text-center text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50"><?= htmlspecialchars($r['chatter_spot_opt_in_pct'] ?? '-') ?></td>
+                        <td class="text-center text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/5"><?= htmlspecialchars($r['chatter_spot_opt_in_accel_pct'] ?? '-') ?></td>
+                        <td class="text-center text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50"><?= htmlspecialchars($r['box_conversion'] ?? '-') ?></td>
+                        <td class="text-center text-gray-600 dark:text-gray-300 bg-white/50 dark:bg-gray-900/50"><?= htmlspecialchars($r['ready_go_setup_per_smt'] ?? '-') ?></td>
+                        <td class="text-right text-amber-600 dark:text-amber-400 bg-white/50 dark:bg-gray-900/50">$<?= number_format($r['device_spiff'] ?? 0, 2) ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -138,16 +175,12 @@
     <script>
         const sidebar = document.getElementById('sidebar');
         const openBtn = document.getElementById('openSidebar');
-        const overlay = document.getElementById('mobileMenuOverlay'); // If we have one in sidebar
 
         function toggleSidebar() {
             sidebar.classList.toggle('-translate-x-full');
         }
 
         if (openBtn) openBtn.addEventListener('click', toggleSidebar);
-        // No overlay needed for full width scrolling table usually, but consistent script
-        // if (closeBtn) closeBtn.addEventListener('click', toggleSidebar); // Removed as per new code
-        // if (overlay) overlay.addEventListener('click', toggleSidebar); // Removed as per new code
     </script>
 </body>
 </html>
