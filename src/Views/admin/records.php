@@ -11,6 +11,25 @@
         th, td { white-space: nowrap; padding: 0.5rem 0.75rem; font-size: 0.75rem; }
         .sticky-col { position: sticky; left: 0; z-index: 10; }
         
+        /* Resizable columns - applied after JS initializes */
+        table.resizable { table-layout: fixed; }
+        th { position: relative; }
+        th .resizer {
+            position: absolute;
+            top: 0;
+            right: -2px;
+            width: 6px;
+            height: 100%;
+            cursor: col-resize;
+            user-select: none;
+            background: transparent;
+            z-index: 100;
+        }
+        th .resizer:hover,
+        th .resizer.resizing {
+            background: rgba(99, 102, 241, 0.6);
+        }
+        
         /* Custom Scrollbar for better UI */
         .custom-scrollbar::-webkit-scrollbar {
             width: 10px;
@@ -181,6 +200,70 @@
         }
 
         if (openBtn) openBtn.addEventListener('click', toggleSidebar);
+
+        // === Resizable Columns ===
+        document.addEventListener('DOMContentLoaded', function() {
+            const table = document.querySelector('table');
+            const headers = table.querySelectorAll('th');
+            
+            // Step 1: Capture natural widths BEFORE applying fixed layout
+            const widths = [];
+            headers.forEach((header) => {
+                widths.push(header.offsetWidth);
+            });
+            
+            // Step 2: Apply widths and enable fixed layout for resizing
+            headers.forEach((header, index) => {
+                header.style.width = widths[index] + 'px';
+                
+                // Create resize handle
+                const resizer = document.createElement('div');
+                resizer.className = 'resizer';
+                header.appendChild(resizer);
+                
+                let startX, startWidth;
+                
+                resizer.addEventListener('mousedown', function(e) {
+                    startX = e.pageX;
+                    startWidth = header.offsetWidth;
+                    resizer.classList.add('resizing');
+                    document.body.style.cursor = 'col-resize';
+                    document.body.style.userSelect = 'none';
+                    
+                    document.addEventListener('mousemove', onMouseMove);
+                    document.addEventListener('mouseup', onMouseUp);
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+                
+                function onMouseMove(e) {
+                    const width = startWidth + (e.pageX - startX);
+                    if (width >= 40) {
+                        header.style.width = width + 'px';
+                    }
+                }
+                
+                function onMouseUp() {
+                    resizer.classList.remove('resizing');
+                    document.body.style.cursor = '';
+                    document.body.style.userSelect = '';
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                }
+                
+                // Double-click to auto-fit
+                resizer.addEventListener('dblclick', function(e) {
+                    // Temporarily remove fixed width to measure content
+                    header.style.width = 'auto';
+                    const autoWidth = header.scrollWidth + 20;
+                    header.style.width = autoWidth + 'px';
+                    e.stopPropagation();
+                });
+            });
+            
+            // Step 3: Apply fixed table layout
+            table.classList.add('resizable');
+        });
     </script>
 </body>
 </html>
