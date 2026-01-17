@@ -42,7 +42,28 @@
             background: rgba(156, 163, 175, 0.5);
             border-radius: 5px;
         }
+        
+        /* Hide table until widths are applied to prevent bounce */
+        table.loading-widths { visibility: hidden; }
     </style>
+    
+    <!-- CRITICAL: Apply saved column widths IMMEDIATELY to prevent bounce -->
+    <script>
+    (function() {
+        const STORAGE_KEY = 'kpi_records_column_widths';
+        try {
+            const savedWidths = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            if (savedWidths && Object.keys(savedWidths).length > 0) {
+                // Create CSS rules for each column width - apply to table directly
+                let css = 'table { table-layout: fixed !important; } ';
+                for (const [index, width] of Object.entries(savedWidths)) {
+                    css += `table th:nth-child(${parseInt(index) + 1}) { width: ${width}px !important; } `;
+                }
+                document.write('<style id="instant-column-widths">' + css + '</style>');
+            }
+        } catch (e) {}
+    })();
+    </script>
 </head>
 <body class="h-screen bg-slate-50 dark:bg-[#0f172a] text-slate-900 dark:text-[#e2e8f0] flex overflow-hidden">
 
@@ -69,8 +90,82 @@
                         &bull; Records: <?= count($records) ?>
                     </p>
                 </div>
-                <div class="flex gap-3">
+            <div class="flex gap-3 items-center">
                     <a href="/sales-kpi-dashboard/admin/dashboard" class="px-4 py-2 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-sm text-gray-600 dark:text-gray-300 transition">Back to List</a>
+                    
+                    <!-- Help Button -->
+                    <div class="relative">
+                        <button id="helpBtn" class="p-2 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-500 dark:text-gray-400 transition" title="Help">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </button>
+                        
+                        <!-- Help Tooltip -->
+                        <div id="helpTooltip" class="hidden absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-50 p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    Table Tips
+                                </h3>
+                                <button id="closeHelp" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <!-- Tip 1: Resize Columns -->
+                                <div class="flex gap-3 p-2.5 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                    <div class="flex-shrink-0 w-7 h-7 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg flex items-center justify-center">
+                                        <svg class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-900 dark:text-white">Resize Columns</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Drag between column headers to resize</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Tip 2: Double-click to auto-fit -->
+                                <div class="flex gap-3 p-2.5 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                    <div class="flex-shrink-0 w-7 h-7 bg-purple-100 dark:bg-purple-500/20 rounded-lg flex items-center justify-center">
+                                        <svg class="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7 5l-4 4"></path></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-900 dark:text-white">Auto-fit Column</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Double-click column edge to fit content</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Tip 3: Sizes Remembered -->
+                                <div class="flex gap-3 p-2.5 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                    <div class="flex-shrink-0 w-7 h-7 bg-amber-100 dark:bg-amber-500/20 rounded-lg flex items-center justify-center">
+                                        <svg class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-900 dark:text-white">Sizes Remembered</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Column widths are saved automatically</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Tip 4: Horizontal Scroll -->
+                                <div class="flex gap-3 p-2.5 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                    <div class="flex-shrink-0 w-7 h-7 bg-emerald-100 dark:bg-emerald-500/20 rounded-lg flex items-center justify-center">
+                                        <svg class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-900 dark:text-white">Scroll Horizontally</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Hold <kbd class="px-1 py-0.5 bg-gray-200 dark:bg-gray-600 rounded text-xs font-mono">Shift</kbd> + scroll</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Reset Button -->
+                            <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                                <button id="resetColumnsBtn" class="w-full flex items-center justify-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-500/20 transition text-sm font-medium">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                    Reset All Column Widths
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -201,16 +296,45 @@
 
         if (openBtn) openBtn.addEventListener('click', toggleSidebar);
 
-        // === Resizable Columns ===
+        // === Resizable Columns with localStorage persistence ===
         document.addEventListener('DOMContentLoaded', function() {
             const table = document.querySelector('table');
             const headers = table.querySelectorAll('th');
+            const STORAGE_KEY = 'kpi_records_column_widths';
+            
+            // Load saved widths from localStorage
+            let savedWidths = {};
+            try {
+                savedWidths = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+            } catch (e) {
+                savedWidths = {};
+            }
+            
+            // Remove the instant CSS now that we're taking over with inline styles
+            const instantStyle = document.getElementById('instant-column-widths');
+            if (instantStyle) {
+                instantStyle.remove();
+            }
             
             // Step 1: Capture natural widths BEFORE applying fixed layout
             const widths = [];
-            headers.forEach((header) => {
-                widths.push(header.offsetWidth);
+            headers.forEach((header, index) => {
+                // Use saved width if available, otherwise use natural width
+                if (savedWidths[index]) {
+                    widths.push(savedWidths[index]);
+                } else {
+                    widths.push(header.offsetWidth);
+                }
             });
+            
+            // Function to save all widths to localStorage
+            function saveWidths() {
+                const currentWidths = {};
+                headers.forEach((header, index) => {
+                    currentWidths[index] = header.offsetWidth;
+                });
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(currentWidths));
+            }
             
             // Step 2: Apply widths and enable fixed layout for resizing
             headers.forEach((header, index) => {
@@ -249,6 +373,8 @@
                     document.body.style.userSelect = '';
                     document.removeEventListener('mousemove', onMouseMove);
                     document.removeEventListener('mouseup', onMouseUp);
+                    // Save widths after resize
+                    saveWidths();
                 }
                 
                 // Double-click to auto-fit
@@ -258,12 +384,50 @@
                     const autoWidth = header.scrollWidth + 20;
                     header.style.width = autoWidth + 'px';
                     e.stopPropagation();
+                    // Save after auto-fit
+                    saveWidths();
                 });
             });
             
             // Step 3: Apply fixed table layout
             table.classList.add('resizable');
         });
+        
+        // === Help Tooltip Toggle ===
+        const helpBtn = document.getElementById('helpBtn');
+        const helpTooltip = document.getElementById('helpTooltip');
+        const closeHelp = document.getElementById('closeHelp');
+        
+        if (helpBtn && helpTooltip) {
+            helpBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                helpTooltip.classList.toggle('hidden');
+            });
+            
+            if (closeHelp) {
+                closeHelp.addEventListener('click', function() {
+                    helpTooltip.classList.add('hidden');
+                });
+            }
+            
+            // Close when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!helpTooltip.contains(e.target) && e.target !== helpBtn) {
+                    helpTooltip.classList.add('hidden');
+                }
+            });
+        }
+        
+        // === Reset Columns Button ===
+        const resetColumnsBtn = document.getElementById('resetColumnsBtn');
+        if (resetColumnsBtn) {
+            resetColumnsBtn.addEventListener('click', function() {
+                // Clear saved column widths from localStorage
+                localStorage.removeItem('kpi_records_column_widths');
+                // Reload page to apply default widths
+                window.location.reload();
+            });
+        }
     </script>
 </body>
 </html>
