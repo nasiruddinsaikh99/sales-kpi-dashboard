@@ -11,7 +11,6 @@
             font-family: 'Inter', sans-serif;
         }
         .glass-panel {
-            /* Light mode fallback */
             background: rgba(255, 255, 255, 0.8);
             border: 1px solid rgba(0, 0, 0, 0.08);
             backdrop-filter: blur(12px);
@@ -74,173 +73,198 @@
             </div>
         <?php else: ?>
 
-        <!-- Key Metrics Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <!-- Net GP -->
-            <div class="glass-panel p-6 stat-card border-l-4 border-blue-500 bg-white dark:bg-slate-800 shadow-sm">
-                <p class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider">Net GP</p>
-                <div class="mt-2 flex items-baseline gap-2">
-                    <span class="text-3xl font-bold text-gray-900 dark:text-white">$<?= number_format($currentRecord['net_gp'], 2) ?></span>
-                </div>
-            </div>
-
-            <!-- Gross Profit -->
-            <div class="glass-panel p-6 stat-card border-l-4 border-emerald-500 bg-white dark:bg-slate-800 shadow-sm">
-                <p class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider">Gross Profit</p>
-                <div class="mt-2">
+        <!-- Row 1: Top Financial Cards (5 cards) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+            <div class="glass-panel p-6 stat-card border-l-4 border-blue-500 bg-white dark:bg-slate-800 shadow-sm flex flex-col">
+                <p class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider min-h-[40px]">Gross Profit</p>
+                <div class="mt-auto">
                     <span class="text-3xl font-bold text-gray-900 dark:text-white">$<?= number_format($currentRecord['gross_profit'], 2) ?></span>
                 </div>
             </div>
-
-            <!-- Total Spiff -->
-            <div class="glass-panel p-6 stat-card border-l-4 border-purple-500 bg-white dark:bg-slate-800 shadow-sm">
-                <p class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider">Total Commission</p>
-                <div class="mt-2">
-                    <span class="text-3xl font-bold text-gray-900 dark:text-white">$<?= number_format($currentRecord['total_gp_spiff_amt'], 2) ?></span>
+            <div class="glass-panel p-6 stat-card border-l-4 border-indigo-500 bg-white dark:bg-slate-800 shadow-sm flex flex-col">
+                <p class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider min-h-[40px]">Net GP After Chargeback</p>
+                <div class="mt-auto">
+                    <span class="text-3xl font-bold text-gray-900 dark:text-white">$<?= number_format($currentRecord['net_gp'], 2) ?></span>
                 </div>
             </div>
-
-            <!-- Final Payout -->
-            <div class="glass-panel p-6 stat-card border-l-4 border-amber-500 bg-white dark:bg-slate-800 shadow-sm">
-                <p class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider">Final Payout</p>
-                <div class="mt-2">
-                    <span class="text-3xl font-bold text-gray-900 dark:text-white">$<?= number_format($currentRecord['final_payout'] ?? 0, 2) ?></span>
+            <div class="glass-panel p-6 stat-card border-l-4 border-purple-500 bg-white dark:bg-slate-800 shadow-sm flex flex-col">
+                <p class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider min-h-[40px]">GP Commission</p>
+                <div class="mt-auto">
+                    <span class="text-3xl font-bold text-gray-900 dark:text-white">$<?= number_format($currentRecord['gp_commission'] ?? 0, 2) ?></span>
+                </div>
+            </div>
+            <div class="glass-panel p-6 stat-card border-l-4 border-cyan-500 bg-white dark:bg-slate-800 shadow-sm flex flex-col">
+                <p class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider min-h-[40px]">GP Spiff Amt for Accelerator</p>
+                <div class="mt-auto">
+                    <span class="text-3xl font-bold text-gray-900 dark:text-white">$<?= number_format($currentRecord['gp_spiff_amt_accelerator'], 2) ?></span>
+                </div>
+            </div>
+            <div class="glass-panel p-6 stat-card border-l-4 border-emerald-500 bg-white dark:bg-slate-800 shadow-sm flex flex-col">
+                <p class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider min-h-[40px]">Final Payout</p>
+                <div class="mt-auto">
+                    <span class="text-3xl font-bold text-emerald-600 dark:text-emerald-400">$<?= number_format($currentRecord['final_payout'] ?? 0, 2) ?></span>
                 </div>
             </div>
         </div>
 
-        <!-- Charts & Details -->
+        <!-- Row 2: Chart + Right Panels -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-            
-            <!-- Main Chart -->
+            <!-- Performance Trend Chart (spans 2 columns) -->
             <div class="lg:col-span-2 glass-panel p-6 bg-white dark:bg-slate-800 shadow-sm">
                 <h3 class="text-lg font-semibold mb-6 flex items-center gap-2 text-gray-900 dark:text-white">
                     <span class="w-2 h-6 bg-blue-500 rounded-full"></span>
-                    Performance Trend (Net GP)
+                    Performance Trend
                 </h3>
                 <div class="h-[300px] w-full">
                     <canvas id="performanceChart"></canvas>
                 </div>
             </div>
 
-            <!-- Financial Breakdown -->
-            <div class="glass-panel p-6 bg-white dark:bg-slate-800 shadow-sm">
-                <h3 class="text-lg font-semibold mb-6 text-gray-900 dark:text-white">Financial Summary</h3>
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                        <span class="text-gray-600 dark:text-gray-400">Chargebacks</span>
-                        <span class="text-red-500 dark:text-red-400 font-mono">$<?= number_format($currentRecord['chargeback'], 2) ?></span>
+            <!-- Right Column: Stacked Panels -->
+            <div class="flex flex-col gap-6">
+                <!-- Deduction Summary -->
+                <div class="glass-panel p-6 bg-white dark:bg-slate-800 shadow-sm">
+                    <h3 class="text-lg font-semibold mb-6 text-gray-900 dark:text-white">Deduction Summary</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                            <span class="text-gray-600 dark:text-gray-400">Payout Chargeback</span>
+                            <span class="text-red-500 dark:text-red-400 font-mono">$<?= number_format($currentRecord['chargeback'], 2) ?></span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+                            <span class="text-gray-600 dark:text-gray-400">Lateness</span>
+                            <span class="text-red-500 dark:text-red-400 font-mono">$<?= number_format($currentRecord['lateness'] ?? 0, 2) ?></span>
+                        </div>
                     </div>
-                    <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                        <span class="text-gray-600 dark:text-gray-400">Accelerator Amt</span>
-                        <span class="text-emerald-600 dark:text-emerald-400 font-mono">$<?= number_format($currentRecord['gp_spiff_amt_accelerator'], 2) ?></span>
-                    </div>
-                    <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                        <span class="text-gray-600 dark:text-gray-400">Lateness</span>
-                        <span class="text-red-500 dark:text-red-400 font-mono">$<?= number_format($currentRecord['lateness'] ?? 0, 2) ?></span>
-                    </div>
-                    <div class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
-                        <span class="text-gray-600 dark:text-gray-400">Device Spiff</span>
-                        <span class="text-blue-600 dark:text-blue-400 font-mono">$<?= number_format($currentRecord['device_spiff'] ?? 0, 2) ?></span>
+                </div>
+
+                <!-- Loyalty Reward -->
+                <div class="glass-panel p-6 bg-white dark:bg-slate-800 shadow-sm">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Loyalty Reward</h3>
+                    <div class="text-center py-4">
+                        <span class="text-4xl font-bold text-emerald-600 dark:text-emerald-400">$<?= number_format($currentRecord['flavor_of_month'] ?? 0, 2) ?></span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Detailed KPI Grid -->
-        <div class="glass-panel p-6 bg-white dark:bg-slate-800 shadow-sm">
+        <!-- Row 3: Spiff Qualifiers -->
+        <div class="glass-panel p-6 bg-white dark:bg-slate-800 shadow-sm mb-8">
             <h3 class="text-lg font-semibold mb-6 flex items-center gap-2 text-gray-900 dark:text-white">
                 <span class="w-2 h-6 bg-emerald-500 rounded-full"></span>
-                Detailed Metrics & Accelerators
+                Spiff Qualifiers and Percentages
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
+                    <p class="text-xs text-gray-500 dark:text-gray-400">GP Spiff Qualified %</p>
+                    <p class="font-bold text-lg text-gray-900 dark:text-white"><?= $currentRecord['gp_spiff_qualified_pct'] ?? '0%' ?></p>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Accelerator Qualifier</p>
+                    <p class="font-bold text-lg text-gray-900 dark:text-white"><?= $currentRecord['total_accelerators_pct'] ?? '0%' ?></p>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Box Conversion</p>
+                    <p class="font-bold text-lg text-gray-900 dark:text-white"><?= $currentRecord['box_conversion'] ?? '-' ?></p>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Ready Go%</p>
+                    <p class="font-bold text-lg text-gray-900 dark:text-white"><?= $currentRecord['ready_go_setup_per_smt'] ?? '-' ?></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 4: Detailed Metrics -->
+        <div class="glass-panel p-6 bg-white dark:bg-slate-800 shadow-sm">
+            <h3 class="text-lg font-semibold mb-6 flex items-center gap-2 text-gray-900 dark:text-white">
+                <span class="w-2 h-6 bg-purple-500 rounded-full"></span>
+                Detailed Metrics
             </h3>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Group 1: General Stats -->
+                <!-- Power Six Column 1 -->
                 <div class="space-y-4">
-                    <h4 class="grid-header text-gray-500 dark:text-gray-400">General Stats</h4>
-                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded lg-card">
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Qualifiers</p>
-                        <p class="font-semibold text-gray-900 dark:text-white"><?= htmlspecialchars($currentRecord['qualifiers'] ?? '-') ?></p>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded lg-card">
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Flavor of Month</p>
-                        <p class="font-semibold text-emerald-600 dark:text-emerald-400">$<?= number_format($currentRecord['flavor_of_month'] ?? 0, 2) ?></p>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded lg-card">
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Fios Qty Sold</p>
-                        <p class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['fios_qty_sold'] ?? 0 ?></p>
-                    </div>
-                </div>
-
-                <!-- Group 2: Upgrades -->
-                <div class="space-y-4">
-                    <h4 class="grid-header text-gray-500 dark:text-gray-400">Upgrades</h4>
-                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded lg-card">
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Priority Upgrade %</p>
+                    <h4 class="grid-header text-gray-500 dark:text-gray-400">Power Six</h4>
+                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">High Priority Upgrade</p>
                         <div class="flex justify-between">
                             <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['priority_upgrade_pct'] ?? '0%' ?></span>
-                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">Accel: <?= $currentRecord['priority_upgrade_accel_pct'] ?? '0%' ?></span>
+                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">30%</span>
                         </div>
                     </div>
-                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded lg-card">
+                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">VHI Close Rate % (FWA/Fios)</p>
+                        <div class="flex justify-between">
+                            <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['vhi_close_rate_pct'] ?? '0%' ?></span>
+                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">20%</span>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
                         <p class="text-xs text-gray-500 dark:text-gray-400">Upgrade Conversion</p>
                         <div class="flex justify-between">
                             <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['upgrade_conversion_pct'] ?? '0%' ?></span>
-                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">Accel: <?= $currentRecord['upgrade_conversion_accel_pct'] ?? '0%' ?></span>
+                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">18%</span>
                         </div>
-                    </div>
-                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded lg-card">
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Upgrade Quantity</p>
-                        <p class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['upgrade_quantity'] ?? 0 ?></p>
                     </div>
                 </div>
 
-                <!-- Group 3: SMT & VZ -->
+                <!-- Power Six Column 2 -->
                 <div class="space-y-4">
-                    <h4 class="grid-header text-gray-500 dark:text-gray-400">SMT & Protection</h4>
-                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded lg-card">
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Cons. SMT GA Conv.</p>
+                    <h4 class="grid-header text-gray-500 dark:text-gray-400">&nbsp;</h4>
+                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">CSGA</p>
                         <div class="flex justify-between">
                             <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['consumer_smt_ga_conversion_pct'] ?? '0%' ?></span>
-                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">Accel: <?= $currentRecord['consumer_smt_ga_conversion_accel_pct'] ?? '0%' ?></span>
+                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">9%</span>
                         </div>
                     </div>
-                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded lg-card">
-                        <p class="text-xs text-gray-500 dark:text-gray-400">VZ Protect %</p>
+                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">VZ Protection</p>
                         <div class="flex justify-between">
                             <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['vz_protect_pct'] ?? '0%' ?></span>
-                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">Accel: <?= $currentRecord['vz_protect_accel_pct'] ?? '0%' ?></span>
+                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">55%</span>
                         </div>
                     </div>
-                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded lg-card">
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Premium Unlimited %</p>
+                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Take Rate for Registered Perks</p>
                         <div class="flex justify-between">
-                            <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['premium_unlimited_pct'] ?? '0%' ?></span>
-                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">Accel: <?= $currentRecord['premium_unlimited_accel_pct'] ?? '0%' ?></span>
+                            <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['take_rate_registered_perks'] ?? '0' ?></span>
+                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">0.58</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Group 4: Other KPIs -->
+                <!-- Swing Metrics -->
                 <div class="space-y-4">
-                    <h4 class="grid-header text-gray-500 dark:text-gray-400">Other KPIs</h4>
-                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded lg-card">
-                        <p class="text-xs text-gray-500 dark:text-gray-400">VHI</p>
+                    <h4 class="grid-header text-amber-600 dark:text-amber-400">Swing Metrics</h4>
+                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Premium Unlimited</p>
                         <div class="flex justify-between">
-                            <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['vhi'] ?? 0 ?></span>
-                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">Accel: <?= $currentRecord['vhi_accel_pct'] ?? '0%' ?></span>
+                            <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['premium_unlimited_pct'] ?? '0%' ?></span>
+                            <span class="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded">60%</span>
                         </div>
                     </div>
-                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded lg-card">
-                        <p class="text-xs text-gray-500 dark:text-gray-400">SMB GA</p>
+                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">AAL (CSGA BYOD+, eSim, DPP)</p>
                         <div class="flex justify-between">
-                            <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['smb_ga'] ?? 0 ?></span>
-                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">Accel: <?= $currentRecord['smb_ga_accel_pct'] ?? '0%' ?></span>
+                            <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['csga'] ?? '0' ?></span>
+                            <span class="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded">30%</span>
                         </div>
                     </div>
-                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded lg-card">
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Total Accel %</p>
-                        <p class="font-bold text-lg text-emerald-600 dark:text-emerald-400"><?= $currentRecord['total_accelerators_pct'] ?? '0%' ?></p>
+                    <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">VHDP Protection</p>
+                        <div class="flex justify-between">
+                            <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['accounts_accessed_pct'] ?? '0%' ?></span>
+                            <span class="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded">5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Device Spiff -->
+                <div class="space-y-4">
+                    <h4 class="grid-header text-purple-600 dark:text-purple-400">Device Spiff</h4>
+                    <div class="bg-gray-50 dark:bg-gray-800/30 p-4 rounded-lg">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Total Device Spiff</p>
+                        <p class="text-3xl font-bold text-purple-600 dark:text-purple-400">$<?= number_format($currentRecord['device_spiff'] ?? 0, 2) ?></p>
                     </div>
                 </div>
             </div>
@@ -262,8 +286,8 @@
 
         const colors = getThemeColors();
         const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)'); // Blue start
-        gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)'); // Transparent end
+        gradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)');
+        gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
 
         const myChart = new Chart(ctx, {
             type: 'line',
@@ -310,7 +334,6 @@
             });
         });
         observer.observe(document.documentElement, { attributes: true });
-
     </script>
 </body>
 </html>

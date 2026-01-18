@@ -54,7 +54,7 @@
         </form>
         
         <div class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
-            For access issues, contact System Administrator.
+            For access issues, contact support@syntrex.io
         </div>
     </div>
 
