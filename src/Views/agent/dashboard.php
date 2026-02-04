@@ -38,11 +38,6 @@
             </div>
             
             <div class="flex items-center gap-4">
-                <button onclick="toggleTheme()" class="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition">
-                    <svg class="hidden dark:block w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                    <svg class="dark:hidden w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-                </button>
-
                 <form method="GET" class="flex items-center gap-2">
                     <select name="month" onchange="this.form.submit()" 
                         class="bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 text-gray-900 dark:text-white transition-colors">
@@ -90,7 +85,7 @@
             <div class="glass-panel p-6 stat-card border-l-4 border-purple-500 bg-white dark:bg-slate-800 shadow-sm flex flex-col">
                 <p class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider min-h-[40px]">GP Commission</p>
                 <div class="mt-auto">
-                    <span class="text-3xl font-bold text-gray-900 dark:text-white">$<?= number_format($currentRecord['gp_commission'] ?? 0, 2) ?></span>
+                    <span class="text-3xl font-bold text-gray-900 dark:text-white">$<?= number_format($currentRecord['total_gp_spiff_amt'] ?? 0, 2) ?></span>
                 </div>
             </div>
             <div class="glass-panel p-6 stat-card border-l-4 border-cyan-500 bg-white dark:bg-slate-800 shadow-sm flex flex-col">
@@ -188,21 +183,21 @@
                         <p class="text-xs text-gray-500 dark:text-gray-400">High Priority Upgrade</p>
                         <div class="flex justify-between">
                             <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['priority_upgrade_pct'] ?? '0%' ?></span>
-                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">30%</span>
+                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded"><?= $currentRecord['priority_upgrade_accel_pct'] ?? '0%' ?></span>
                         </div>
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
                         <p class="text-xs text-gray-500 dark:text-gray-400">VHI Close Rate % (FWA/Fios)</p>
                         <div class="flex justify-between">
                             <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['vhi_close_rate_pct'] ?? '0%' ?></span>
-                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">20%</span>
+                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded"><?= $currentRecord['vhi_accel_pct'] ?? '0%' ?></span>
                         </div>
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
                         <p class="text-xs text-gray-500 dark:text-gray-400">Upgrade Conversion</p>
                         <div class="flex justify-between">
                             <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['upgrade_conversion_pct'] ?? '0%' ?></span>
-                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">18%</span>
+                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded"><?= $currentRecord['upgrade_conversion_accel_pct'] ?? '0%' ?></span>
                         </div>
                     </div>
                 </div>
@@ -214,21 +209,21 @@
                         <p class="text-xs text-gray-500 dark:text-gray-400">CSGA</p>
                         <div class="flex justify-between">
                             <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['consumer_smt_ga_conversion_pct'] ?? '0%' ?></span>
-                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">9%</span>
+                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded"><?= $currentRecord['consumer_smt_ga_conversion_accel_pct'] ?? '0%' ?></span>
                         </div>
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
                         <p class="text-xs text-gray-500 dark:text-gray-400">VZ Protection</p>
                         <div class="flex justify-between">
                             <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['vz_protect_pct'] ?? '0%' ?></span>
-                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">55%</span>
+                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded"><?= $currentRecord['vz_protect_accel_pct'] ?? '0%' ?></span>
                         </div>
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
                         <p class="text-xs text-gray-500 dark:text-gray-400">Take Rate for Registered Perks</p>
                         <div class="flex justify-between">
                             <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['take_rate_registered_perks'] ?? '0' ?></span>
-                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded">0.58</span>
+                            <span class="text-xs bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded"><?= $currentRecord['take_rate_registered_perks_accel_pct'] ?? '0%' ?></span>
                         </div>
                     </div>
                 </div>
@@ -240,21 +235,21 @@
                         <p class="text-xs text-gray-500 dark:text-gray-400">Premium Unlimited</p>
                         <div class="flex justify-between">
                             <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['premium_unlimited_pct'] ?? '0%' ?></span>
-                            <span class="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded">60%</span>
+                            <span class="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded"><?= $currentRecord['premium_unlimited_accel_pct'] ?? '0%' ?></span>
                         </div>
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
                         <p class="text-xs text-gray-500 dark:text-gray-400">AAL (CSGA BYOD+, eSim, DPP)</p>
                         <div class="flex justify-between">
-                            <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['csga'] ?? '0' ?></span>
-                            <span class="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded">30%</span>
+                            <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['smt_ga'] ?? '0' ?></span>
+                            <span class="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded"><?= $currentRecord['smb_ga_accel_pct'] ?? '0%' ?></span>
                         </div>
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-800/30 p-3 rounded-lg">
                         <p class="text-xs text-gray-500 dark:text-gray-400">VHDP Protection</p>
                         <div class="flex justify-between">
                             <span class="font-semibold text-gray-900 dark:text-white"><?= $currentRecord['accounts_accessed_pct'] ?? '0%' ?></span>
-                            <span class="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded">5%</span>
+                            <span class="text-xs bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded"><?= $currentRecord['accounts_accessed_accel_pct'] ?? '0%' ?></span>
                         </div>
                     </div>
                 </div>
