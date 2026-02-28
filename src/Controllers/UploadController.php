@@ -129,15 +129,17 @@ class UploadController {
 
         // Define mappings: DB field => possible header variations
         // NOTE: Order matters - more specific patterns should come first
+        // UPDATED: Added support for new data CSV format variations
         $fieldMappings = [
             'agent_name' => ['individual employee', 'employee', 'agent name', 'name'],
-            'gross_profit' => ['gross profit'],
+            'gross_profit' => ['gross profit (rq)', 'gross profit'],
             'net_gp' => ['net gp after chargebacks', 'net gp'],
+            'chargeback' => ['chargeback', 'total chargeback', 'chargebacks'],
             'gp_spiff_qualified_pct' => ['gp spiff qualified %', 'gp spiff qualified'],
-            'total_gp_spiff_amt' => ['gp commission', 'total gp spiff amt'],
+            'total_gp_spiff_amt' => ['total gp spiff amt', 'gp commission'],
             'gp_spiff_amt_accelerator' => ['gp spiff amt for accelerator'],
             'payout' => ['payout'],
-            'payout_cb' => ['payout chargeback', 'payout cb'],
+            'payout_cb' => ['payout cb', 'payout chargeback'],
             'lateness' => ['lateness'],
             'final_payout' => ['final payout'],
             'qualifiers' => ['qualifiers'],
@@ -153,6 +155,8 @@ class UploadController {
             'vz_protect_pct' => ['vz protect %'],
             'take_rate_registered_perks' => ['take rate for registered perks'],
             'premium_unlimited_pct' => ['premium unlimited %'],
+            'aal_qualifier' => ['aal (csga byod, csga byod+, csga esim, csga dpp) 30% or above', 'aal qualifier'],
+            'vhdp_protection' => ['vhdp protection 5% or above', 'vhdp protection'],
             'smb_ga' => ['smb ga'],
             'agpps_dp_only' => ['agpps on dp only'],
             'accounts_accessed_pct' => ['accounts accessed %'],
