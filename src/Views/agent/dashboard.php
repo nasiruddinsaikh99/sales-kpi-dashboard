@@ -30,21 +30,36 @@
     <!-- Header -->
     <header class="border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/50 backdrop-blur sticky top-0 z-50 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center font-bold text-sm text-white">
-                    <?= substr($_SESSION['user_name'], 0, 1) ?>
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center font-bold text-sm text-white">
+                        <?= substr($_SESSION['user_name'], 0, 1) ?>
+                    </div>
+                    <span class="font-semibold text-gray-700 dark:text-gray-200"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
                 </div>
-                <span class="font-semibold text-gray-700 dark:text-gray-200"><?= htmlspecialchars($_SESSION['user_name']) ?></span>
+
+                <!-- Tab Navigation -->
+                <nav class="flex gap-1">
+                    <a href="/sales-kpi-dashboard/agent/dashboard"
+                       class="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 transition">
+                        Dashboard
+                    </a>
+                    <a href="/sales-kpi-dashboard/agent/communications" id="communicationsTab"
+                       class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition relative">
+                        Communications
+                        <span id="unreadBadge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold"></span>
+                    </a>
+                </nav>
             </div>
-            
+
             <div class="flex items-center gap-4">
                 <form method="GET" class="flex items-center gap-2">
-                    <select name="month" onchange="this.form.submit()" 
+                    <select name="month" onchange="this.form.submit()"
                         class="bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 text-gray-900 dark:text-white transition-colors">
                         <?php foreach($history as $h): ?>
-                             <?php 
-                                $optVal = $h['month']; 
-                                $optLabel = date('F Y', strtotime($h['month'])); 
+                             <?php
+                                $optVal = $h['month'];
+                                $optLabel = date('F Y', strtotime($h['month']));
                              ?>
                              <option value="<?= $optVal ?>" <?= $selectedMonth == $optVal ? 'selected' : '' ?>>
                                 <?= $optLabel ?>
@@ -329,6 +344,28 @@
             });
         });
         observer.observe(document.documentElement, { attributes: true });
+
+        // Fetch unread communications count
+        function fetchUnreadCount() {
+            fetch('/sales-kpi-dashboard/communications/unread-count')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('unreadBadge');
+                    if (data.count > 0) {
+                        badge.textContent = data.count;
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                })
+                .catch(error => console.error('Error fetching unread count:', error));
+        }
+
+        // Fetch on page load
+        fetchUnreadCount();
+
+        // Optionally fetch every 60 seconds
+        setInterval(fetchUnreadCount, 60000);
     </script>
 </body>
 </html>

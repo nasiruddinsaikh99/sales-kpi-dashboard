@@ -20,10 +20,15 @@
             <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
             <span class="sidebar-text whitespace-nowrap">Dashboard</span>
         </a>
-        
+
         <a href="/sales-kpi-dashboard/admin/upload" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg transition <?= strpos($_SERVER['REQUEST_URI'], '/admin/upload') !== false ? 'bg-indigo-50 dark:bg-gray-800 text-indigo-600 dark:text-white' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' ?>" title="Upload Data">
             <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
             <span class="sidebar-text whitespace-nowrap">Upload Data</span>
+        </a>
+
+        <a href="/sales-kpi-dashboard/admin/communications" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg transition <?= strpos($_SERVER['REQUEST_URI'], '/admin/communications') !== false ? 'bg-indigo-50 dark:bg-gray-800 text-indigo-600 dark:text-white' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' ?>" title="Communications">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+            <span class="sidebar-text whitespace-nowrap">Communications</span>
         </a>
 
         <a href="/sales-kpi-dashboard/admin/records" class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-lg transition <?= strpos($_SERVER['REQUEST_URI'], '/admin/records') !== false ? 'bg-indigo-50 dark:bg-gray-800 text-indigo-600 dark:text-white' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800' ?>" title="Records">

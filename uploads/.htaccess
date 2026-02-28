@@ -1,0 +1,4 @@
+# Deny direct access to all files in uploads directory
+# Files should only be accessed through the download controller
+Order Deny,Allow
+Deny from all

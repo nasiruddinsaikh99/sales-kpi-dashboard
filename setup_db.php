@@ -53,6 +53,42 @@ try {
     ) ENGINE=InnoDB");
     echo "Table 'settings' created or exists.\n";
 
+    // 5. Communications Table
+    $pdo->exec("CREATE TABLE IF NOT EXISTS communications (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        message TEXT NOT NULL,
+        created_by_user_id INT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB");
+    echo "Table 'communications' created or exists.\n";
+
+    // 6. Communication Files Table
+    $pdo->exec("CREATE TABLE IF NOT EXISTS communication_files (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        communication_id INT NOT NULL,
+        filename VARCHAR(255) NOT NULL,
+        original_filename VARCHAR(255) NOT NULL,
+        filepath VARCHAR(500) NOT NULL,
+        filesize INT NOT NULL,
+        uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (communication_id) REFERENCES communications(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB");
+    echo "Table 'communication_files' created or exists.\n";
+
+    // 7. Communication Reads Table
+    $pdo->exec("CREATE TABLE IF NOT EXISTS communication_reads (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        communication_id INT NOT NULL,
+        user_id INT NOT NULL,
+        read_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE KEY unique_read (communication_id, user_id),
+        FOREIGN KEY (communication_id) REFERENCES communications(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB");
+    echo "Table 'communication_reads' created or exists.\n";
+
     // Create Initial Admin User
     $adminEmail = 'admin@example.com';
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE email = ?");

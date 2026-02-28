@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(git:*)",
+      "Bash(php:*)",
+      "Bash(pwd:*)",
+      "Bash(which:*)",
+      "Bash(whoami:*)",
+      "Bash(date:*)",
+      "Bash(echo:*)",
+      "Bash(tree:*)",
+      "Bash(wc:*)",
+      "Bash(diff:*)",
+      "Bash(stat:*)",
+      "Bash(file:*)",
+      "Bash(chmod:*)",
+      "Bash(chown:*)",
+      "Bash(mkdir:*)",
+      "Bash(touch:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(composer:*)",
+      "Bash(npm:*)",
+      "Bash(node:*)",
+      "Bash(mysql:*)"
+    ]
+  }
+}

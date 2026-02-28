@@ -43,7 +43,13 @@ $routes = [
     '/admin/records' => ['controller' => 'AdminController', 'action' => 'records'],
     '/admin/settings' => ['controller' => 'AdminController', 'action' => 'settings'],
     '/admin/settings/update' => ['controller' => 'AdminController', 'action' => 'updateSettings'],
+    '/admin/communications' => ['controller' => 'CommunicationController', 'action' => 'adminIndex'],
+    '/admin/communications/store' => ['controller' => 'CommunicationController', 'action' => 'store'],
+    '/admin/communications/delete' => ['controller' => 'CommunicationController', 'action' => 'delete'],
     '/agent/dashboard' => ['controller' => 'DashboardController', 'action' => 'index'],
+    '/agent/communications' => ['controller' => 'CommunicationController', 'action' => 'agentIndex'],
+    '/communications/download' => ['controller' => 'CommunicationController', 'action' => 'downloadFile'],
+    '/communications/unread-count' => ['controller' => 'CommunicationController', 'action' => 'getUnreadCount'],
 ];
 
 if (array_key_exists($uri, $routes)) {
