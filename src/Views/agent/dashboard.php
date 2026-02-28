@@ -49,6 +49,10 @@
                         Communications
                         <span id="unreadBadge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold"></span>
                     </a>
+                    <a href="/sales-kpi-dashboard/agent/leaderboard"
+                       class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                        🏆 Leaderboard
+                    </a>
                 </nav>
             </div>
 

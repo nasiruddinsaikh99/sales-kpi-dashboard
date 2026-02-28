@@ -48,8 +48,17 @@ $routes = [
     '/admin/communications/delete' => ['controller' => 'CommunicationController', 'action' => 'delete'],
     '/agent/dashboard' => ['controller' => 'DashboardController', 'action' => 'index'],
     '/agent/communications' => ['controller' => 'CommunicationController', 'action' => 'agentIndex'],
+    '/agent/leaderboard' => ['controller' => 'LeaderboardController', 'action' => 'agentView'],
     '/communications/download' => ['controller' => 'CommunicationController', 'action' => 'downloadFile'],
     '/communications/unread-count' => ['controller' => 'CommunicationController', 'action' => 'getUnreadCount'],
+
+    // Ranking/Leaderboard routes
+    '/admin/rankings' => ['controller' => 'RankingController', 'action' => 'index'],
+    '/admin/rankings/upload' => ['controller' => 'RankingController', 'action' => 'uploadForm'],
+    '/admin/rankings/process' => ['controller' => 'RankingController', 'action' => 'processUpload'],
+    '/admin/rankings/delete' => ['controller' => 'RankingController', 'action' => 'delete'],
+    '/admin/leaderboard' => ['controller' => 'LeaderboardController', 'action' => 'adminView'],
+    '/leaderboard/search' => ['controller' => 'LeaderboardController', 'action' => 'search'],
 ];
 
 if (array_key_exists($uri, $routes)) {

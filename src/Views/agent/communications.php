@@ -83,6 +83,10 @@
                        class="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 transition">
                         Communications
                     </a>
+                    <a href="/sales-kpi-dashboard/agent/leaderboard"
+                       class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                        🏆 Leaderboard
+                    </a>
                 </nav>
             </div>
 
