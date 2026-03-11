@@ -113,20 +113,43 @@ class RankingController {
             $user = $userModel->findByName($employeeName);
             $userId = $user ? $user['id'] : null;
 
-            // Prepare record data
+            // Prepare record data with new fields
             $recordData = [
                 'ranking_upload_id' => $uploadId,
                 'user_id' => $userId,
                 'employee_name' => $employeeName,
                 'overall_rank' => $this->cleanInteger($row[$columnMap['overall_rank']] ?? '0'),
                 'total_attainment_pct' => $this->cleanPercentage($row[$columnMap['total_attainment_pct']] ?? '0'),
-                'hpu_attainment_pct' => $this->cleanPercentage($row[$columnMap['hpu_attainment_pct']] ?? '0'),
-                'vhi_conv_attainment_pct' => $this->cleanPercentage($row[$columnMap['vhi_conv_attainment_pct']] ?? '0'),
-                'upg_conv_attainment_pct' => $this->cleanPercentage($row[$columnMap['upg_conv_attainment_pct']] ?? '0'),
-                'csga_attainment_pct' => $this->cleanPercentage($row[$columnMap['csga_attainment_pct']] ?? '0'),
-                'vmp_take_attainment_pct' => $this->cleanPercentage($row[$columnMap['vmp_take_attainment_pct']] ?? '0'),
-                'perks_attainment_pct' => $this->cleanPercentage($row[$columnMap['perks_attainment_pct']] ?? '0'),
-                'traffic_gp_cust_attainment_pct' => $this->cleanPercentage($row[$columnMap['traffic_gp_cust_attainment_pct']] ?? '0')
+
+                // Premium Unlimited (HPU) - triplet
+                'hpu_actual_pct' => isset($columnMap['hpu_actual_pct']) ? $this->cleanPercentage($row[$columnMap['hpu_actual_pct']] ?? '0') : null,
+                'hpu_goal_pct' => isset($columnMap['hpu_goal_pct']) ? $this->cleanPercentage($row[$columnMap['hpu_goal_pct']] ?? '0') : null,
+                'hpu_attainment_pct' => isset($columnMap['hpu_attainment_pct']) ? $this->cleanPercentage($row[$columnMap['hpu_attainment_pct']] ?? '0') : null,
+
+                // VZ VHI Conv - triplet
+                'vhi_conv_actual_pct' => isset($columnMap['vhi_conv_actual_pct']) ? $this->cleanPercentage($row[$columnMap['vhi_conv_actual_pct']] ?? '0') : null,
+                'vhi_conv_goal_pct' => isset($columnMap['vhi_conv_goal_pct']) ? $this->cleanPercentage($row[$columnMap['vhi_conv_goal_pct']] ?? '0') : null,
+                'vhi_conv_attainment_pct' => isset($columnMap['vhi_conv_attainment_pct']) ? $this->cleanPercentage($row[$columnMap['vhi_conv_attainment_pct']] ?? '0') : null,
+
+                // CSGA - triplet
+                'csga_actual_pct' => isset($columnMap['csga_actual_pct']) ? $this->cleanPercentage($row[$columnMap['csga_actual_pct']] ?? '0') : null,
+                'csga_goal_pct' => isset($columnMap['csga_goal_pct']) ? $this->cleanPercentage($row[$columnMap['csga_goal_pct']] ?? '0') : null,
+                'csga_attainment_pct' => isset($columnMap['csga_attainment_pct']) ? $this->cleanPercentage($row[$columnMap['csga_attainment_pct']] ?? '0') : null,
+
+                // VMP Take Rate - triplet (decimal values, not percentages)
+                'vmp_take_actual' => isset($columnMap['vmp_take_actual']) ? $this->cleanDecimal($row[$columnMap['vmp_take_actual']] ?? '0') : null,
+                'vmp_take_goal' => isset($columnMap['vmp_take_goal']) ? $this->cleanDecimal($row[$columnMap['vmp_take_goal']] ?? '0') : null,
+                'vmp_take_attainment_pct' => isset($columnMap['vmp_take_attainment_pct']) ? $this->cleanPercentage($row[$columnMap['vmp_take_attainment_pct']] ?? '0') : null,
+
+                // VZ Perks Rate - triplet (decimal values, not percentages)
+                'vz_perks_actual' => isset($columnMap['vz_perks_actual']) ? $this->cleanDecimal($row[$columnMap['vz_perks_actual']] ?? '0') : null,
+                'vz_perks_goal' => isset($columnMap['vz_perks_goal']) ? $this->cleanDecimal($row[$columnMap['vz_perks_goal']] ?? '0') : null,
+                'vz_perks_attainment_pct' => isset($columnMap['vz_perks_attainment_pct']) ? $this->cleanPercentage($row[$columnMap['vz_perks_attainment_pct']] ?? '0') : null,
+
+                // Traffic GP/Cust - triplet (currency values)
+                'traffic_gp_actual' => isset($columnMap['traffic_gp_actual']) ? $this->cleanCurrency($row[$columnMap['traffic_gp_actual']] ?? '0') : null,
+                'traffic_gp_goal' => isset($columnMap['traffic_gp_goal']) ? $this->cleanCurrency($row[$columnMap['traffic_gp_goal']] ?? '0') : null,
+                'traffic_gp_cust_attainment_pct' => isset($columnMap['traffic_gp_cust_attainment_pct']) ? $this->cleanPercentage($row[$columnMap['traffic_gp_cust_attainment_pct']] ?? '0') : null
             ];
 
             try {
@@ -176,40 +199,64 @@ class RankingController {
             return strtolower(trim($h));
         }, $headers);
 
-        // Define possible column names
-        $columnMappings = [
-            'employee_name' => ['individual employee', 'employee', 'agent name', 'name'],
-            'overall_rank' => ['overall rank', 'rank', 'position'],
-            'total_attainment_pct' => ['total attainment %', 'total attainment', 'overall attainment'],
-            'hpu_attainment_pct' => ['hpu attainment %', 'hpu attainment', 'hpu %'],
-            'vhi_conv_attainment_pct' => ['vhi conv attainment %', 'vhi conversion attainment', 'vhi conv %'],
-            'upg_conv_attainment_pct' => ['upg conv attainment %', 'upgrade conversion attainment', 'upg conv %'],
-            'csga_attainment_pct' => ['csga attainment %', 'csga attainment', 'csga %'],
-            'vmp_take_attainment_pct' => ['vmp take attainment %', 'vmp take', 'vmp %'],
-            'perks_attainment_pct' => ['perks attainment %', 'perks attainment', 'perks %'],
-            'traffic_gp_cust_attainment_pct' => ['traffic gp/cust attainment %', 'traffic gp/cust', 'traffic gp', 'gp/cust attainment']
-        ];
+        // For the new CSV format with triplets (Actual, Goal, Attained %)
+        // The pattern is: KPI Name, KPI Goal, Attained %
 
-        foreach ($columnMappings as $field => $possibleNames) {
-            foreach ($possibleNames as $possibleName) {
-                $index = array_search($possibleName, $normalizedHeaders);
-                if ($index !== false) {
-                    $map[$field] = $index;
-                    break;
-                }
-            }
+        // Basic columns
+        $map['employee_name'] = array_search('individual employee', $normalizedHeaders);
+        $map['overall_rank'] = array_search('overall rank', $normalizedHeaders);
+        $map['total_attainment_pct'] = array_search('total attainment', $normalizedHeaders);
 
-            // If not found by exact match, try contains
-            if (!isset($map[$field])) {
-                foreach ($normalizedHeaders as $index => $header) {
-                    foreach ($possibleNames as $possibleName) {
-                        if (strpos($header, $possibleName) !== false) {
-                            $map[$field] = $index;
-                            break 2;
-                        }
-                    }
-                }
+        // Find KPI triplets by looking for patterns
+        // The CSV has a pattern where "Attained %" appears multiple times
+        $attainedIndices = [];
+        foreach ($normalizedHeaders as $index => $header) {
+            if ($header === 'attained %') {
+                $attainedIndices[] = $index;
             }
+        }
+
+        // Map the triplets based on the order they appear
+        // Premium Unlimited (HPU) - columns 3,4,5
+        if (count($attainedIndices) >= 1) {
+            $map['hpu_actual_pct'] = 3;  // Premium Unlimited %
+            $map['hpu_goal_pct'] = 4;    // Premium Unlimited Goal
+            $map['hpu_attainment_pct'] = 5; // First "Attained %"
+        }
+
+        // VZ VHI Conv - columns 6,7,8
+        if (count($attainedIndices) >= 2) {
+            $map['vhi_conv_actual_pct'] = 6;  // VZ VHI Conv %
+            $map['vhi_conv_goal_pct'] = 7;    // VZ VHI GA Goal
+            $map['vhi_conv_attainment_pct'] = 8; // Second "Attained %"
+        }
+
+        // CSGA - columns 9,10,11
+        if (count($attainedIndices) >= 3) {
+            $map['csga_actual_pct'] = 9;   // CSGA %
+            $map['csga_goal_pct'] = 10;    // CSGA Goal
+            $map['csga_attainment_pct'] = 11; // Third "Attained %"
+        }
+
+        // VMP Take Rate - columns 12,13,14
+        if (count($attainedIndices) >= 4) {
+            $map['vmp_take_actual'] = 12;   // VMP Take Rate
+            $map['vmp_take_goal'] = 13;     // VMP Goal
+            $map['vmp_take_attainment_pct'] = 14; // Fourth "Attained %"
+        }
+
+        // VZ Perks Rate - columns 15,16,17
+        if (count($attainedIndices) >= 5) {
+            $map['vz_perks_actual'] = 15;    // VZ Perks Rate
+            $map['vz_perks_goal'] = 16;      // VZ Perks Goal
+            $map['vz_perks_attainment_pct'] = 17; // Fifth "Attained %"
+        }
+
+        // Traffic GP/Cust - columns 18,19,20
+        if (count($attainedIndices) >= 6) {
+            $map['traffic_gp_actual'] = 18;   // Traffic GP/Cust (dollar value)
+            $map['traffic_gp_goal'] = 19;     // Traffic GP/Cust Goal
+            $map['traffic_gp_cust_attainment_pct'] = 20; // Sixth "Attained %"
         }
 
         return $map;
@@ -232,5 +279,31 @@ class RankingController {
 
     private function cleanInteger($value) {
         return intval(preg_replace('/[^0-9]/', '', $value));
+    }
+
+    private function cleanDecimal($value) {
+        // Remove any spaces
+        $value = trim($value);
+
+        // Handle negative values in parentheses
+        if (preg_match('/\(([0-9.]+)\)/', $value, $matches)) {
+            $value = '-' . $matches[1];
+        }
+
+        // Convert to float
+        return floatval($value);
+    }
+
+    private function cleanCurrency($value) {
+        // Remove currency symbols and spaces
+        $value = str_replace(['$', ',', ' '], '', $value);
+
+        // Handle negative values in parentheses
+        if (preg_match('/\(([0-9.]+)\)/', $value, $matches)) {
+            $value = '-' . $matches[1];
+        }
+
+        // Convert to float
+        return floatval($value);
     }
 }

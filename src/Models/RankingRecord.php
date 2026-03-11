@@ -12,11 +12,14 @@ class RankingRecord {
     public function create($data) {
         $stmt = $this->pdo->prepare("
             INSERT INTO ranking_records (
-                ranking_upload_id, user_id, employee_name, overall_rank,
-                total_attainment_pct, hpu_attainment_pct, vhi_conv_attainment_pct,
-                upg_conv_attainment_pct, csga_attainment_pct, vmp_take_attainment_pct,
-                perks_attainment_pct, traffic_gp_cust_attainment_pct
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ranking_upload_id, user_id, employee_name, overall_rank, total_attainment_pct,
+                hpu_actual_pct, hpu_goal_pct, hpu_attainment_pct,
+                vhi_conv_actual_pct, vhi_conv_goal_pct, vhi_conv_attainment_pct,
+                csga_actual_pct, csga_goal_pct, csga_attainment_pct,
+                vmp_take_actual, vmp_take_goal, vmp_take_attainment_pct,
+                vz_perks_actual, vz_perks_goal, vz_perks_attainment_pct,
+                traffic_gp_actual, traffic_gp_goal, traffic_gp_cust_attainment_pct
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
         return $stmt->execute([
@@ -25,12 +28,23 @@ class RankingRecord {
             $data['employee_name'],
             $data['overall_rank'],
             $data['total_attainment_pct'],
+            $data['hpu_actual_pct'],
+            $data['hpu_goal_pct'],
             $data['hpu_attainment_pct'],
+            $data['vhi_conv_actual_pct'],
+            $data['vhi_conv_goal_pct'],
             $data['vhi_conv_attainment_pct'],
-            $data['upg_conv_attainment_pct'],
+            $data['csga_actual_pct'],
+            $data['csga_goal_pct'],
             $data['csga_attainment_pct'],
+            $data['vmp_take_actual'],
+            $data['vmp_take_goal'],
             $data['vmp_take_attainment_pct'],
-            $data['perks_attainment_pct'],
+            $data['vz_perks_actual'],
+            $data['vz_perks_goal'],
+            $data['vz_perks_attainment_pct'],
+            $data['traffic_gp_actual'],
+            $data['traffic_gp_goal'],
             $data['traffic_gp_cust_attainment_pct']
         ]);
     }
@@ -157,10 +171,9 @@ class RankingRecord {
             AND (
                 hpu_attainment_pct >= 125 OR
                 vhi_conv_attainment_pct >= 125 OR
-                upg_conv_attainment_pct >= 125 OR
                 csga_attainment_pct >= 125 OR
                 vmp_take_attainment_pct >= 125 OR
-                perks_attainment_pct >= 125 OR
+                vz_perks_attainment_pct >= 125 OR
                 traffic_gp_cust_attainment_pct >= 125
             )
             ORDER BY rr.overall_rank ASC

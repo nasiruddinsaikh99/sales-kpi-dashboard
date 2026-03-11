@@ -183,18 +183,28 @@ function formatPercentage($value) {
 
         <div class="overflow-x-auto">
             <table class="w-full">
-                <thead class="bg-gray-50 dark:bg-slate-900/50 border-b border-gray-200 dark:border-slate-700">
+                <thead class="bg-slate-50 dark:bg-slate-900/50 border-b border-gray-200 dark:border-slate-700">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Rank</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Employee</th>
                         <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total</th>
-                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">HPU</th>
-                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">VHI Conv</th>
-                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Upg Conv</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Premium<br>Unlimited
+                        </th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            VHI<br>Conv
+                        </th>
                         <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">CSGA</th>
-                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">VMP Take</th>
-                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Perks</th>
-                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Traffic GP</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            VMP<br>Take
+                        </th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            VZ<br>Perks
+                        </th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Traffic<br>GP/Cust
+                        </th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Details</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-slate-700" id="rankingsTableBody">
@@ -235,25 +245,69 @@ function formatPercentage($value) {
                             <?= formatPercentage($rank['total_attainment_pct']) ?>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                            <?= formatPercentage($rank['hpu_attainment_pct']) ?>
+                            <?= formatPercentage($rank['hpu_attainment_pct'] ?? 0) ?>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                            <?= formatPercentage($rank['vhi_conv_attainment_pct']) ?>
+                            <?= formatPercentage($rank['vhi_conv_attainment_pct'] ?? 0) ?>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                            <?= formatPercentage($rank['upg_conv_attainment_pct']) ?>
+                            <?= formatPercentage($rank['csga_attainment_pct'] ?? 0) ?>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                            <?= formatPercentage($rank['csga_attainment_pct']) ?>
+                            <?= formatPercentage($rank['vmp_take_attainment_pct'] ?? 0) ?>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                            <?= formatPercentage($rank['vmp_take_attainment_pct']) ?>
+                            <?= formatPercentage($rank['vz_perks_attainment_pct'] ?? 0) ?>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                            <?= formatPercentage($rank['perks_attainment_pct']) ?>
+                            <?= formatPercentage($rank['traffic_gp_cust_attainment_pct'] ?? 0) ?>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
-                            <?= formatPercentage($rank['traffic_gp_cust_attainment_pct']) ?>
+                            <button onclick="toggleDetails(<?= $rank['overall_rank'] ?>)" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
+                                <svg id="icon-<?= $rank['overall_rank'] ?>" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                    <!-- Details Row (Hidden by default) -->
+                    <tr id="details-<?= $rank['overall_rank'] ?>" class="hidden bg-gray-50 dark:bg-slate-900/30">
+                        <td colspan="11" class="px-6 py-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                <div class="space-y-2">
+                                    <h4 class="font-semibold text-gray-700 dark:text-gray-300">Premium Unlimited</h4>
+                                    <div class="text-gray-600 dark:text-gray-400">
+                                        Actual: <?= number_format($rank['hpu_actual_pct'] ?? 0, 2) ?>% |
+                                        Goal: <?= number_format($rank['hpu_goal_pct'] ?? 0, 2) ?>%
+                                    </div>
+                                    <div class="text-gray-600 dark:text-gray-400">
+                                        VHI Conv - Actual: <?= number_format($rank['vhi_conv_actual_pct'] ?? 0, 2) ?>% |
+                                        Goal: <?= number_format($rank['vhi_conv_goal_pct'] ?? 0, 2) ?>%
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <h4 class="font-semibold text-gray-700 dark:text-gray-300">Service Metrics</h4>
+                                    <div class="text-gray-600 dark:text-gray-400">
+                                        CSGA - Actual: <?= number_format($rank['csga_actual_pct'] ?? 0, 2) ?>% |
+                                        Goal: <?= number_format($rank['csga_goal_pct'] ?? 0, 2) ?>%
+                                    </div>
+                                    <div class="text-gray-600 dark:text-gray-400">
+                                        VMP Take - Actual: <?= number_format($rank['vmp_take_actual'] ?? 0, 2) ?> |
+                                        Goal: <?= number_format($rank['vmp_take_goal'] ?? 0, 2) ?>
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <h4 class="font-semibold text-gray-700 dark:text-gray-300">Revenue Metrics</h4>
+                                    <div class="text-gray-600 dark:text-gray-400">
+                                        VZ Perks - Actual: <?= number_format($rank['vz_perks_actual'] ?? 0, 2) ?> |
+                                        Goal: <?= number_format($rank['vz_perks_goal'] ?? 0, 2) ?>
+                                    </div>
+                                    <div class="text-gray-600 dark:text-gray-400">
+                                        Traffic GP - Actual: $<?= number_format($rank['traffic_gp_actual'] ?? 0, 2) ?> |
+                                        Goal: $<?= number_format($rank['traffic_gp_goal'] ?? 0, 2) ?>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                     <?php endforeach; ?>
@@ -272,13 +326,37 @@ document.getElementById('searchInput')?.addEventListener('input', function(e) {
 
     rows.forEach(row => {
         const name = row.getAttribute('data-name');
+        const detailsRow = row.nextElementSibling;
+
         if (name.includes(searchTerm)) {
             row.style.display = '';
+            // Keep details row visibility state if main row is visible
         } else {
             row.style.display = 'none';
+            // Hide details row if main row is hidden
+            if (detailsRow && detailsRow.id && detailsRow.id.startsWith('details-')) {
+                detailsRow.classList.add('hidden');
+            }
         }
     });
 });
+
+// Toggle details function
+function toggleDetails(rank) {
+    const detailsRow = document.getElementById('details-' + rank);
+    const icon = document.getElementById('icon-' + rank);
+
+    if (detailsRow) {
+        detailsRow.classList.toggle('hidden');
+
+        // Rotate icon
+        if (detailsRow.classList.contains('hidden')) {
+            icon.style.transform = 'rotate(0deg)';
+        } else {
+            icon.style.transform = 'rotate(180deg)';
+        }
+    }
+}
 
 // Smooth scroll to user position
 <?php if (!$isAdmin && $currentUserData): ?>
